@@ -2,35 +2,49 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/dateUtils';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { 
+  Tooltip, 
+  TooltipContent, 
+  TooltipProvider, 
+  TooltipTrigger 
+} from '@/components/ui/tooltip';
+import { 
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@/components/ui/hover-card';
 
 interface ActivityCellProps {
   date: Date;
   level: number; // 0-4 (none, light, medium, high, very high)
   size?: 'sm' | 'md' | 'lg';
   className?: string;
+  habitDetails?: {
+    habitName: string;
+    level: number;
+  }[];
 }
 
 const ActivityCell: React.FC<ActivityCellProps> = ({ 
   date, 
   level, 
   size = 'md',
-  className 
+  className,
+  habitDetails = []
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  
   const cellSizeClasses = {
     sm: 'w-2.5 h-2.5',
     md: 'w-3.5 h-3.5',
     lg: 'w-4 h-4',
   };
   
+  // Updated color palette for a more vibrant, punchy look
   const cellLevelClasses = {
     0: 'bg-gray-100 hover:bg-gray-200',
-    1: 'bg-green-200 hover:bg-green-300',
-    2: 'bg-green-300 hover:bg-green-400',
-    3: 'bg-green-500 hover:bg-green-600',
-    4: 'bg-green-700 hover:bg-green-800',
+    1: 'bg-purple-200 hover:bg-purple-300',
+    2: 'bg-purple-300 hover:bg-purple-400',
+    3: 'bg-purple-500 hover:bg-purple-600',
+    4: 'bg-purple-700 hover:bg-purple-800',
   };
 
   const activityLevels = {
@@ -41,32 +55,51 @@ const ActivityCell: React.FC<ActivityCellProps> = ({
     4: 'Very high activity',
   };
   
+  // Use hover card for more detailed information
   return (
-    <TooltipProvider delayDuration={100}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div
-            className={cn(
-              'rounded-sm contribution-cell shadow-sm',
-              cellSizeClasses[size],
-              cellLevelClasses[level as keyof typeof cellLevelClasses],
-              className
-            )}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          />
-        </TooltipTrigger>
-        <TooltipContent 
-          side="top" 
-          className="bg-white/90 backdrop-blur-md text-xs py-2 px-3 rounded-lg shadow-md border border-white/40 font-medium"
-        >
-          <div className="flex flex-col gap-0.5">
-            <span className="text-gray-800 font-semibold">{formatDate(date)}</span>
-            <span className="text-gray-500 text-[10px]">{activityLevels[level as keyof typeof activityLevels]}</span>
+    <HoverCard>
+      <HoverCardTrigger asChild>
+        <div
+          className={cn(
+            'rounded-md shadow-sm transition-all duration-300 ease-in-out',
+            cellSizeClasses[size],
+            cellLevelClasses[level as keyof typeof cellLevelClasses],
+            'hover:scale-150 hover:z-10',
+            className
+          )}
+        />
+      </HoverCardTrigger>
+      <HoverCardContent 
+        side="top" 
+        className="p-0 w-56 bg-white/95 backdrop-blur-md rounded-lg shadow-lg border border-purple-100"
+      >
+        <div className="p-3">
+          <div className="mb-2">
+            <p className="text-gray-800 font-semibold">{formatDate(date)}</p>
+            <p className="text-gray-500 text-xs">{activityLevels[level as keyof typeof activityLevels]}</p>
           </div>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+          
+          {habitDetails.length > 0 && (
+            <div className="pt-2 border-t border-gray-100">
+              <p className="text-xs font-medium text-gray-500 mb-1.5">Completed habits:</p>
+              <ul className="space-y-1">
+                {habitDetails.map((habit, idx) => (
+                  <li key={idx} className="flex items-center gap-1.5 text-xs">
+                    <span className={cn(
+                      'w-1.5 h-1.5 rounded-full',
+                      habit.level === 1 ? 'bg-purple-300' :
+                      habit.level === 2 ? 'bg-purple-400' :
+                      habit.level === 3 ? 'bg-purple-500' : 'bg-purple-700'
+                    )}></span>
+                    <span className="text-gray-700">{habit.habitName}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </HoverCardContent>
+    </HoverCard>
   );
 };
 

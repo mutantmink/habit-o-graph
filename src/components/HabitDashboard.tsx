@@ -7,7 +7,7 @@ import HabitList from './HabitList';
 import HabitForm from './HabitForm';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { ChartIcon, TrendingUpIcon } from 'lucide-react';
+import { BarChart2, TrendingUp } from 'lucide-react';
 
 const HabitDashboard: React.FC = () => {
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -83,31 +83,31 @@ const HabitDashboard: React.FC = () => {
       
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 slide-up" style={{ animationDelay: '0.1s' }}>
-        <Card className="bg-white/90 backdrop-blur-sm border-white/40 shadow-md">
+        <Card className="bg-white/90 backdrop-blur-sm border-purple-100 shadow-md">
           <CardContent className="p-6 flex flex-col items-center justify-center">
             <p className="text-sm font-medium text-gray-500 mb-1">Total Habits</p>
-            <p className="text-3xl font-bold text-blue-600">{habits.length}</p>
+            <p className="text-3xl font-bold text-purple-600">{habits.length}</p>
           </CardContent>
         </Card>
         
-        <Card className="bg-white/90 backdrop-blur-sm border-white/40 shadow-md">
+        <Card className="bg-white/90 backdrop-blur-sm border-purple-100 shadow-md">
           <CardContent className="p-6 flex flex-col items-center justify-center">
             <p className="text-sm font-medium text-gray-500 mb-1">Contributions</p>
-            <p className="text-3xl font-bold text-green-600">{totalContributions}</p>
+            <p className="text-3xl font-bold text-purple-600">{totalContributions}</p>
           </CardContent>
         </Card>
         
-        <Card className="bg-white/90 backdrop-blur-sm border-white/40 shadow-md">
+        <Card className="bg-white/90 backdrop-blur-sm border-purple-100 shadow-md">
           <CardContent className="p-6 flex flex-col items-center justify-center">
             <p className="text-sm font-medium text-gray-500 mb-1">Current Streak</p>
-            <p className="text-3xl font-bold text-amber-600">{currentStreak} days</p>
+            <p className="text-3xl font-bold text-purple-600">{currentStreak} days</p>
           </CardContent>
         </Card>
         
-        <Card className="bg-white/90 backdrop-blur-sm border-white/40 shadow-md">
+        <Card className="bg-white/90 backdrop-blur-sm border-purple-100 shadow-md">
           <CardContent className="p-6 flex flex-col items-center justify-center">
-            <p className="text-sm font-medium text-gray-500 mb-1">Time Range</p>
-            <p className="text-3xl font-bold text-purple-600">{isMobile ? 180 : 365} days</p>
+            <p className="text-sm font-medium text-gray-500 mb-1">Year View</p>
+            <p className="text-3xl font-bold text-purple-600">{new Date().getFullYear()}</p>
           </CardContent>
         </Card>
       </div>
@@ -121,10 +121,10 @@ const HabitDashboard: React.FC = () => {
           </div>
           
           {/* Today's habits */}
-          <Card className="overflow-hidden slide-up bg-white/90 backdrop-blur-sm border-white/40 shadow-md" style={{ animationDelay: '0.3s' }}>
+          <Card className="overflow-hidden slide-up bg-white/90 backdrop-blur-sm border-purple-100 shadow-md" style={{ animationDelay: '0.3s' }}>
             <CardHeader className="pb-0 space-y-0">
               <CardTitle className="flex items-center gap-2">
-                <TrendingUpIcon className="h-5 w-5 text-blue-500" />
+                <TrendingUp className="h-5 w-5 text-purple-500" />
                 Today's Habits
               </CardTitle>
             </CardHeader>
@@ -139,16 +139,16 @@ const HabitDashboard: React.FC = () => {
         </div>
         
         {/* Contribution graph section */}
-        <Card className="lg:col-span-2 order-1 lg:order-2 slide-up bg-white/90 backdrop-blur-sm border-white/40 shadow-md" style={{ animationDelay: '0.15s' }}>
+        <Card className="lg:col-span-2 order-1 lg:order-2 slide-up bg-white/90 backdrop-blur-sm border-purple-100 shadow-md" style={{ animationDelay: '0.15s' }}>
           <CardHeader className="pb-2">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
-                <ChartIcon className="h-5 w-5 text-blue-500" />
+                <BarChart2 className="h-5 w-5 text-purple-500" />
                 <CardTitle>Activity Overview</CardTitle>
               </div>
-              <div className="flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1">
-                <span className="h-2 w-2 rounded-full bg-blue-500"></span>
-                <span className="text-xs text-blue-700 font-medium">{dateRangeString}</span>
+              <div className="flex items-center gap-2 rounded-full bg-purple-50 px-3 py-1">
+                <span className="h-2 w-2 rounded-full bg-purple-500"></span>
+                <span className="text-xs text-purple-700 font-medium">{dateRangeString}</span>
               </div>
             </div>
             <CardDescription className="text-gray-500">
@@ -157,8 +157,7 @@ const HabitDashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <ContributionGraph 
-              habitData={habitData} 
-              days={isMobile ? 180 : 365}
+              habitData={habitData}
             />
           </CardContent>
         </Card>

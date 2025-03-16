@@ -1,5 +1,5 @@
 
-import { format, addDays, startOfWeek, startOfYear, eachDayOfInterval } from 'date-fns';
+import { format, addDays, startOfWeek, startOfYear, endOfYear, eachDayOfInterval } from 'date-fns';
 
 // Get the days for the contribution graph (default: 1 year)
 export const getContributionDays = (numDays = 365): Date[] => {
@@ -9,6 +9,21 @@ export const getContributionDays = (numDays = 365): Date[] => {
   return eachDayOfInterval({
     start: startDate,
     end: today
+  });
+};
+
+// Get all days in a given year
+export const getDaysInYear = (year: number): Date[] => {
+  const start = new Date(year, 0, 1); // January 1st
+  const end = new Date(year, 11, 31); // December 31st
+  
+  // If year is current year, only show days up to today
+  const today = new Date();
+  const endDate = year === today.getFullYear() ? today : end;
+  
+  return eachDayOfInterval({
+    start,
+    end: endDate
   });
 };
 
@@ -23,7 +38,8 @@ export const getMonthLabels = (days: Date[]): { month: string, index: number }[]
     const month = format(day, 'MMM');
     if (month !== currentMonth) {
       currentMonth = month;
-      labels.push({ month, index });
+      const weekIndex = Math.floor(index / 7);
+      labels.push({ month, index: weekIndex });
     }
   });
   

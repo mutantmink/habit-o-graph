@@ -24,21 +24,21 @@ export const defaultHabits: Habit[] = [
     name: 'Exercise',
     description: 'Physical activity for at least 30 minutes',
     createdAt: new Date('2023-01-01'),
-    color: '#7bc96f',
+    color: '#9b87f5',
   },
   {
     id: '2',
     name: 'Read',
     description: 'Read a book for at least 15 minutes',
     createdAt: new Date('2023-01-15'),
-    color: '#c6e48b',
+    color: '#7E69AB',
   },
   {
     id: '3',
     name: 'Meditate',
     description: 'Meditate for at least 10 minutes',
     createdAt: new Date('2023-02-01'),
-    color: '#239a3b',
+    color: '#6E59A5',
   },
 ];
 
@@ -52,13 +52,13 @@ export const generateSampleData = (): HabitData => {
   defaultHabits.forEach(habit => {
     data[habit.id] = {};
     
-    // Generate past 90 days with some random data
-    for (let i = 0; i < 90; i++) {
+    // Generate past 365 days with some random data
+    for (let i = 0; i < 365; i++) {
       const date = new Date();
       date.setDate(now.getDate() - i);
       const dateKey = formatDateKey(date);
       
-      // Create some patterns
+      // Create patterns for each habit type
       if (habit.id === '1') { // Exercise: mostly every other day
         data[habit.id][dateKey] = i % 2 === 0 ? Math.floor(Math.random() * 3) + 1 : 0;
       } else if (habit.id === '2') { // Read: more consistent
@@ -67,9 +67,10 @@ export const generateSampleData = (): HabitData => {
         data[habit.id][dateKey] = Math.random() > 0.6 ? Math.floor(Math.random() * 2) + 1 : 0;
       }
       
-      // Ensure today is empty for demo purposes
+      // Ensure today has some data for demo purposes
       if (dateKey === today) {
-        data[habit.id][dateKey] = 0;
+        // Give a 50% chance of having activity on today
+        data[habit.id][dateKey] = Math.random() > 0.5 ? Math.floor(Math.random() * 4) + 1 : 0;
       }
     }
   });
@@ -77,8 +78,14 @@ export const generateSampleData = (): HabitData => {
   return data;
 };
 
+// Get habit name by id
+export const getHabitNameById = (habits: Habit[], habitId: string): string => {
+  const habit = habits.find(h => h.id === habitId);
+  return habit ? habit.name : `Habit ${habitId}`;
+};
+
 // Calculate streak for a habit
-export const calculateStreak = (habitData: { [date: string]: number }, habitId: string): number => {
+export const calculateStreak = (habitData: { [date: string]: number }): number => {
   if (!habitData) return 0;
   
   const sortedDates = Object.keys(habitData).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
