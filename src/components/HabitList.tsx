@@ -38,7 +38,7 @@ const HabitList: React.FC<HabitListProps> = ({
   // Calculate streak for each habit
   const getHabitStreak = (habitId: string): number => {
     if (!habitData[habitId]) return 0;
-    return calculateStreak(habitData[habitId], habitId);
+    return calculateStreak(habitData[habitId]);
   };
   
   return (
