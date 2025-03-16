@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { PlusCircle, X } from 'lucide-react';
+import { PlusCircle, X, Sparkles } from 'lucide-react';
 import { Habit } from '@/utils/habitUtils';
 import { toast } from 'sonner';
 
@@ -41,34 +41,35 @@ const HabitForm: React.FC<HabitFormProps> = ({ onAddHabit }) => {
   };
   
   const getRandomColor = () => {
-    const colors = ['#c6e48b', '#7bc96f', '#239a3b', '#196127'];
+    const colors = ['#4f46e5', '#0ea5e9', '#059669', '#d946ef', '#f59e0b', '#ec4899'];
     return colors[Math.floor(Math.random() * colors.length)];
   };
   
   if (!isFormOpen) {
     return (
-      <div className="my-4">
-        <Button 
-          onClick={() => setIsFormOpen(true)}
-          variant="outline" 
-          className="w-full flex items-center justify-center gap-2 py-6 border border-dashed border-gray-200 text-gray-500 hover:text-gray-700 hover:border-gray-300 animate-fade-in bg-white/50 hover:bg-white/70 transition-all duration-300 group"
-        >
-          <PlusCircle className="h-5 w-5 transition-transform group-hover:scale-110 duration-300" />
-          <span className="font-medium">Add New Habit</span>
-        </Button>
-      </div>
+      <Button 
+        onClick={() => setIsFormOpen(true)}
+        variant="outline" 
+        className="w-full flex items-center justify-center gap-2 py-6 border border-dashed border-blue-200 text-blue-600 hover:text-blue-700 hover:border-blue-300 bg-white/70 hover:bg-white/90 transition-all duration-300 group backdrop-blur-sm shadow-sm hover:shadow"
+      >
+        <PlusCircle className="h-5 w-5 transition-transform group-hover:scale-110 duration-300" />
+        <span className="font-medium">Add New Habit</span>
+      </Button>
     );
   }
   
   return (
-    <div className="my-6 p-4 rounded-xl border border-gray-100 bg-white shadow-sm animate-scale-in">
+    <div className="p-5 rounded-xl border border-white/40 bg-white/90 backdrop-blur-sm shadow-md scale-in">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-medium text-gray-800">Add New Habit</h3>
+        <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+          <Sparkles className="h-5 w-5 text-blue-500" />
+          New Habit
+        </h3>
         <Button 
           variant="ghost" 
           size="icon" 
           onClick={() => setIsFormOpen(false)}
-          className="h-8 w-8 text-gray-500 hover:text-gray-700"
+          className="h-8 w-8 text-gray-500 hover:text-gray-700 hover:bg-gray-100/50"
         >
           <X className="h-4 w-4" />
         </Button>
@@ -84,7 +85,7 @@ const HabitForm: React.FC<HabitFormProps> = ({ onAddHabit }) => {
             placeholder="e.g., Exercise, Read, Meditate"
             value={habitName}
             onChange={(e) => setHabitName(e.target.value)}
-            className="w-full"
+            className="w-full border-gray-200 focus:border-blue-300 bg-white/80 backdrop-blur-sm"
             autoFocus
           />
         </div>
@@ -98,19 +99,25 @@ const HabitForm: React.FC<HabitFormProps> = ({ onAddHabit }) => {
             placeholder="e.g., Walk for 30 minutes"
             value={habitDescription}
             onChange={(e) => setHabitDescription(e.target.value)}
-            className="w-full"
+            className="w-full border-gray-200 focus:border-blue-300 bg-white/80 backdrop-blur-sm"
           />
         </div>
         
-        <div className="flex justify-end gap-2 pt-2">
+        <div className="flex justify-end gap-3 pt-2">
           <Button 
             type="button" 
             variant="outline" 
             onClick={() => setIsFormOpen(false)}
+            className="border-gray-200 text-gray-600"
           >
             Cancel
           </Button>
-          <Button type="submit">Add Habit</Button>
+          <Button 
+            type="submit"
+            className="bg-gradient-to-tr from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white shadow-md hover:shadow-lg transition-all duration-300"
+          >
+            Add Habit
+          </Button>
         </div>
       </form>
     </div>

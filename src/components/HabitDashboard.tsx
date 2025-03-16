@@ -7,6 +7,7 @@ import HabitList from './HabitList';
 import HabitForm from './HabitForm';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ChartIcon, TrendingUpIcon } from 'lucide-react';
 
 const HabitDashboard: React.FC = () => {
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -49,26 +50,84 @@ const HabitDashboard: React.FC = () => {
   const totalContributions = Object.values(habitData).reduce((total, habitEntries) => {
     return total + Object.values(habitEntries).filter(level => level > 0).length;
   }, 0);
+
+  // Calculate streak days (consecutive days with at least one habit)
+  const calculateCurrentStreak = () => {
+    const today = new Date();
+    let currentDate = new Date(today);
+    let streak = 0;
+    
+    while (true) {
+      const dateKey = formatDateKey(currentDate);
+      const hasActivity = Object.values(habitData).some(habit => habit[dateKey] && habit[dateKey] > 0);
+      
+      if (!hasActivity) break;
+      
+      streak++;
+      currentDate.setDate(currentDate.getDate() - 1);
+    }
+    
+    return streak;
+  };
+
+  const currentStreak = calculateCurrentStreak();
   
   return (
-    <div className="max-w-4xl mx-auto px-4 md:px-8 py-8 animate-fade-in">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-semibold text-gray-900 mb-2">Habit Dashboard</h1>
+    <div className="max-w-5xl mx-auto px-4 md:px-8 py-8 fade-in">
+      <div className="text-center mb-10">
+        <h1 className="text-4xl font-bold text-gray-900 mb-3 tracking-tight">Habit Dashboard</h1>
         <p className="text-gray-500 max-w-2xl mx-auto">
           Track your daily habits with a simple, visual interface. Build consistency and see your progress over time.
         </p>
+      </div>
+      
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 slide-up" style={{ animationDelay: '0.1s' }}>
+        <Card className="bg-white/90 backdrop-blur-sm border-white/40 shadow-md">
+          <CardContent className="p-6 flex flex-col items-center justify-center">
+            <p className="text-sm font-medium text-gray-500 mb-1">Total Habits</p>
+            <p className="text-3xl font-bold text-blue-600">{habits.length}</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-white/90 backdrop-blur-sm border-white/40 shadow-md">
+          <CardContent className="p-6 flex flex-col items-center justify-center">
+            <p className="text-sm font-medium text-gray-500 mb-1">Contributions</p>
+            <p className="text-3xl font-bold text-green-600">{totalContributions}</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-white/90 backdrop-blur-sm border-white/40 shadow-md">
+          <CardContent className="p-6 flex flex-col items-center justify-center">
+            <p className="text-sm font-medium text-gray-500 mb-1">Current Streak</p>
+            <p className="text-3xl font-bold text-amber-600">{currentStreak} days</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-white/90 backdrop-blur-sm border-white/40 shadow-md">
+          <CardContent className="p-6 flex flex-col items-center justify-center">
+            <p className="text-sm font-medium text-gray-500 mb-1">Time Range</p>
+            <p className="text-3xl font-bold text-purple-600">{isMobile ? 180 : 365} days</p>
+          </CardContent>
+        </Card>
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Habit tracking section */}
         <div className="lg:col-span-1 order-2 lg:order-1 grid gap-6">
           {/* Add habit form */}
-          <div className="animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          <div className="slide-up" style={{ animationDelay: '0.2s' }}>
             <HabitForm onAddHabit={handleAddHabit} />
           </div>
           
           {/* Today's habits */}
-          <Card className="overflow-hidden animate-slide-up" style={{ animationDelay: '0.2s' }}>
+          <Card className="overflow-hidden slide-up bg-white/90 backdrop-blur-sm border-white/40 shadow-md" style={{ animationDelay: '0.3s' }}>
+            <CardHeader className="pb-0 space-y-0">
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUpIcon className="h-5 w-5 text-blue-500" />
+                Today's Habits
+              </CardTitle>
+            </CardHeader>
             <CardContent className="pt-6">
               <HabitList 
                 habits={habits} 
@@ -80,11 +139,20 @@ const HabitDashboard: React.FC = () => {
         </div>
         
         {/* Contribution graph section */}
-        <Card className="lg:col-span-2 order-1 lg:order-2 animate-slide-up">
-          <CardHeader>
-            <CardTitle>Activity Overview</CardTitle>
-            <CardDescription>
-              {dateRangeString} · {totalContributions} contributions
+        <Card className="lg:col-span-2 order-1 lg:order-2 slide-up bg-white/90 backdrop-blur-sm border-white/40 shadow-md" style={{ animationDelay: '0.15s' }}>
+          <CardHeader className="pb-2">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <ChartIcon className="h-5 w-5 text-blue-500" />
+                <CardTitle>Activity Overview</CardTitle>
+              </div>
+              <div className="flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1">
+                <span className="h-2 w-2 rounded-full bg-blue-500"></span>
+                <span className="text-xs text-blue-700 font-medium">{dateRangeString}</span>
+              </div>
+            </div>
+            <CardDescription className="text-gray-500">
+              {totalContributions} contributions • {currentStreak} day{currentStreak !== 1 ? 's' : ''} streak
             </CardDescription>
           </CardHeader>
           <CardContent>

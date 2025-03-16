@@ -21,16 +21,16 @@ const ActivityCell: React.FC<ActivityCellProps> = ({
   
   const cellSizeClasses = {
     sm: 'w-2.5 h-2.5',
-    md: 'w-3 h-3',
+    md: 'w-3.5 h-3.5',
     lg: 'w-4 h-4',
   };
   
   const cellLevelClasses = {
-    0: 'bg-habit-empty hover:bg-habit-empty/80',
-    1: 'bg-habit-level1 hover:bg-habit-level1/90',
-    2: 'bg-habit-level2 hover:bg-habit-level2/90',
-    3: 'bg-habit-level3 hover:bg-habit-level3/90',
-    4: 'bg-habit-level4 hover:bg-habit-level4/90',
+    0: 'bg-gray-100 hover:bg-gray-200',
+    1: 'bg-green-200 hover:bg-green-300',
+    2: 'bg-green-300 hover:bg-green-400',
+    3: 'bg-green-500 hover:bg-green-600',
+    4: 'bg-green-700 hover:bg-green-800',
   };
 
   const activityLevels = {
@@ -47,7 +47,7 @@ const ActivityCell: React.FC<ActivityCellProps> = ({
         <TooltipTrigger asChild>
           <div
             className={cn(
-              'rounded-sm contribution-cell',
+              'rounded-sm contribution-cell shadow-sm',
               cellSizeClasses[size],
               cellLevelClasses[level as keyof typeof cellLevelClasses],
               className
@@ -58,10 +58,10 @@ const ActivityCell: React.FC<ActivityCellProps> = ({
         </TooltipTrigger>
         <TooltipContent 
           side="top" 
-          className="bg-white/90 backdrop-blur-sm text-xs py-1.5 px-2.5 rounded-md shadow-md border border-gray-100 font-medium"
+          className="bg-white/90 backdrop-blur-md text-xs py-2 px-3 rounded-lg shadow-md border border-white/40 font-medium"
         >
           <div className="flex flex-col gap-0.5">
-            <span className="text-gray-800">{formatDate(date)}</span>
+            <span className="text-gray-800 font-semibold">{formatDate(date)}</span>
             <span className="text-gray-500 text-[10px]">{activityLevels[level as keyof typeof activityLevels]}</span>
           </div>
         </TooltipContent>

@@ -61,16 +61,16 @@ const ContributionGraph: React.FC<ContributionGraphProps> = ({
   }, [contributionDays]);
   
   return (
-    <div className={`animate-fade-in ${className}`}>
+    <div className={`fade-in ${className}`}>
       {/* Month labels */}
       <div className="flex ml-7 mb-1">
         {monthLabels.map((label, i) => (
           <div 
             key={`month-${label.month}-${i}`}
-            className="text-xs text-gray-500 font-medium"
+            className="text-xs text-gray-600 font-medium"
             style={{ 
               position: 'relative', 
-              left: `${label.index * 12.5}px`
+              left: `${label.index * 15}px`
             }}
           >
             {label.month}
@@ -80,12 +80,12 @@ const ContributionGraph: React.FC<ContributionGraphProps> = ({
       
       <div className="flex">
         {/* Day labels */}
-        <div className="flex flex-col mr-2 mt-2">
+        <div className="flex flex-col mr-3 mt-2">
           {dayLabels.map((day, i) => (
             <div 
               key={`day-${day}`} 
-              className="text-xs text-gray-500 font-medium h-3 flex items-center justify-end"
-              style={{ marginBottom: i < 6 ? '9px' : 0 }}
+              className="text-xs text-gray-500 font-medium h-3.5 flex items-center justify-end"
+              style={{ marginBottom: i < 6 ? '10px' : 0 }}
             >
               {day}
             </div>
@@ -93,13 +93,13 @@ const ContributionGraph: React.FC<ContributionGraphProps> = ({
         </div>
         
         {/* Contribution grid */}
-        <div className="flex flex-wrap gap-[1px] sm:gap-[2px]">
+        <div className="flex flex-wrap gap-[2px] sm:gap-[3px]">
           {weeks.map((week, weekIndex) => (
-            <div key={`week-${weekIndex}`} className="flex flex-col gap-[1px] sm:gap-[2px]">
+            <div key={`week-${weekIndex}`} className="flex flex-col gap-[2px] sm:gap-[3px]">
               {week.map((day, dayIndex) => {
                 // Skip rendering for placeholder dates
                 if (day.getTime() === 0) {
-                  return <div key={`empty-${weekIndex}-${dayIndex}`} className="w-3 h-3" />;
+                  return <div key={`empty-${weekIndex}-${dayIndex}`} className="w-3.5 h-3.5" />;
                 }
                 
                 const dateKey = formatDateKey(day);
@@ -119,8 +119,8 @@ const ContributionGraph: React.FC<ContributionGraphProps> = ({
       </div>
       
       {/* Legend */}
-      <div className="mt-2 flex items-center justify-end">
-        <span className="text-xs text-gray-500 mr-2">Less</span>
+      <div className="mt-4 flex items-center justify-end">
+        <span className="text-xs text-gray-500 mr-2 font-medium">Less</span>
         {[0, 1, 2, 3, 4].map(level => (
           <ActivityCell 
             key={`legend-${level}`} 
@@ -129,7 +129,7 @@ const ContributionGraph: React.FC<ContributionGraphProps> = ({
             className="mr-1"
           />
         ))}
-        <span className="text-xs text-gray-500 ml-1">More</span>
+        <span className="text-xs text-gray-500 ml-1 font-medium">More</span>
       </div>
     </div>
   );
