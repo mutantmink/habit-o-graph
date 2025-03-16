@@ -3,12 +3,6 @@ import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/dateUtils';
 import { 
-  Tooltip, 
-  TooltipContent, 
-  TooltipProvider, 
-  TooltipTrigger 
-} from '@/components/ui/tooltip';
-import { 
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
@@ -23,6 +17,7 @@ interface ActivityCellProps {
     habitName: string;
     level: number;
   }[];
+  color?: string; // Add color prop for custom habit colors
 }
 
 const ActivityCell: React.FC<ActivityCellProps> = ({ 
@@ -30,7 +25,8 @@ const ActivityCell: React.FC<ActivityCellProps> = ({
   level, 
   size = 'md',
   className,
-  habitDetails = []
+  habitDetails = [],
+  color
 }) => {
   const cellSizeClasses = {
     sm: 'w-2.5 h-2.5',
@@ -38,13 +34,34 @@ const ActivityCell: React.FC<ActivityCellProps> = ({
     lg: 'w-4 h-4',
   };
   
-  // Updated color palette for a more vibrant, punchy look
-  const cellLevelClasses = {
+  // Default color palette for a more vibrant, punchy look
+  const defaultLevelClasses = {
     0: 'bg-gray-100 hover:bg-gray-200',
     1: 'bg-purple-200 hover:bg-purple-300',
     2: 'bg-purple-300 hover:bg-purple-400',
     3: 'bg-purple-500 hover:bg-purple-600',
     4: 'bg-purple-700 hover:bg-purple-800',
+  };
+
+  // Custom color styles when a specific color is provided
+  const getCustomColorStyle = () => {
+    if (!color || level === 0) return {};
+    
+    // For level 0, we use the default gray
+    if (level === 0) return {};
+    
+    // For other levels, we use custom color with opacity based on level
+    const opacity = {
+      1: '0.3',
+      2: '0.5',
+      3: '0.7',
+      4: '0.9'
+    }[level] || '0.5';
+    
+    return {
+      backgroundColor: color,
+      opacity: opacity,
+    };
   };
 
   const activityLevels = {
@@ -63,10 +80,11 @@ const ActivityCell: React.FC<ActivityCellProps> = ({
           className={cn(
             'rounded-md shadow-sm transition-all duration-300 ease-in-out',
             cellSizeClasses[size],
-            cellLevelClasses[level as keyof typeof cellLevelClasses],
+            !color && defaultLevelClasses[level as keyof typeof defaultLevelClasses],
             'hover:scale-150 hover:z-10',
             className
           )}
+          style={color ? getCustomColorStyle() : {}}
         />
       </HoverCardTrigger>
       <HoverCardContent 

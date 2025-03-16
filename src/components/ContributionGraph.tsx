@@ -6,7 +6,7 @@ import {
   formatDateKey,
   getDaysInYear
 } from '@/utils/dateUtils';
-import { getActivityData, HabitData } from '@/utils/habitUtils';
+import { getActivityData, HabitData, Habit } from '@/utils/habitUtils';
 import ActivityCell from './ActivityCell';
 import { 
   Select,
@@ -15,17 +15,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, X } from 'lucide-react';
 
 interface ContributionGraphProps {
   habitData: HabitData;
   className?: string;
   days?: number;
+  selectedHabitId?: string;
+  habits?: Habit[];
+  onClearSelectedHabit?: () => void;
 }
 
 const ContributionGraph: React.FC<ContributionGraphProps> = ({ 
   habitData, 
-  className
+  className,
+  selectedHabitId,
+  habits = [],
+  onClearSelectedHabit
 }) => {
   // Current year and available years for selection
   const currentYear = new Date().getFullYear();
@@ -48,11 +54,31 @@ const ContributionGraph: React.FC<ContributionGraphProps> = ({
     [contributionDays]
   );
   
-  // Calculate activity data
-  const activityData = useMemo(() => 
-    getActivityData(habitData, contributionDays), 
-    [habitData, contributionDays]
-  );
+  // Calculate activity data - filter for selected habit if applicable
+  const activityData = useMemo(() => {
+    if (selectedHabitId) {
+      // Show activity for just one habit
+      const habitActivityData: { [date: string]: number } = {};
+      const habitInfo = habitData[selectedHabitId] || {};
+      
+      // Convert the single habit data to activity levels
+      contributionDays.forEach(day => {
+        const dateKey = formatDateKey(day);
+        habitActivityData[dateKey] = habitInfo[dateKey] || 0;
+      });
+      
+      return habitActivityData;
+    } else {
+      // Show overall activity data
+      return getActivityData(habitData, contributionDays);
+    }
+  }, [habitData, contributionDays, selectedHabitId]);
+  
+  // Find the selected habit for color information
+  const selectedHabit = useMemo(() => {
+    if (!selectedHabitId) return null;
+    return habits.find(h => h.id === selectedHabitId) || null;
+  }, [selectedHabitId, habits]);
   
   // Group days by month for a more elegant grid layout
   const weeks = useMemo(() => {
@@ -80,6 +106,9 @@ const ContributionGraph: React.FC<ContributionGraphProps> = ({
     const result: {[key: string]: {habitName: string, level: number}[]} = {};
     
     Object.entries(habitData).forEach(([habitId, dates]) => {
+      // If a habit is selected, only include data for that habit
+      if (selectedHabitId && habitId !== selectedHabitId) return;
+      
       Object.entries(dates).forEach(([dateKey, level]) => {
         if (level > 0) {
           if (!result[dateKey]) {
@@ -87,7 +116,8 @@ const ContributionGraph: React.FC<ContributionGraphProps> = ({
           }
           
           // Find the habit name from the habitId
-          const habitName = `Habit ${habitId}`; // This should be replaced with actual habit names
+          const habit = habits.find(h => h.id === habitId);
+          const habitName = habit ? habit.name : `Habit ${habitId}`;
           
           result[dateKey].push({
             habitName,
@@ -98,11 +128,11 @@ const ContributionGraph: React.FC<ContributionGraphProps> = ({
     });
     
     return result;
-  }, [habitData]);
+  }, [habitData, habits, selectedHabitId]);
   
   return (
     <div className={`fade-in ${className}`}>
-      {/* Year selector */}
+      {/* Header with Year selector and selected habit indicator */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-baseline gap-4">
           <h3 className="text-sm font-medium text-gray-500">Year</h3>
@@ -122,6 +152,26 @@ const ContributionGraph: React.FC<ContributionGraphProps> = ({
             </SelectContent>
           </Select>
         </div>
+        
+        {selectedHabit && (
+          <div className="flex items-center">
+            <div 
+              className="px-3 py-1.5 rounded-full text-sm font-medium shadow-sm flex items-center gap-2"
+              style={{ 
+                backgroundColor: selectedHabit.color || '#9b87f5',
+                color: 'white'
+              }}
+            >
+              {selectedHabit.name}
+              <button 
+                onClick={onClearSelectedHabit}
+                className="hover:bg-white/20 rounded-full p-0.5"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
       
       {/* Month labels */}
@@ -160,6 +210,7 @@ const ContributionGraph: React.FC<ContributionGraphProps> = ({
                   date={day}
                   level={level}
                   habitDetails={habitDetails}
+                  color={selectedHabit?.color}
                 />
               );
             })}
@@ -176,6 +227,7 @@ const ContributionGraph: React.FC<ContributionGraphProps> = ({
             date={new Date()} 
             level={level}
             className="mr-1.5"
+            color={selectedHabit?.color}
           />
         ))}
         <span className="text-xs text-gray-500 ml-1 font-medium">More</span>

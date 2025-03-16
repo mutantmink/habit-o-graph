@@ -12,6 +12,7 @@ import { BarChart2, TrendingUp } from 'lucide-react';
 const HabitDashboard: React.FC = () => {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [habitData, setHabitData] = useState<HabitData>({});
+  const [selectedHabitId, setSelectedHabitId] = useState<string | undefined>();
   const isMobile = useIsMobile();
   
   // Initialize with sample data
@@ -31,6 +32,16 @@ const HabitDashboard: React.FC = () => {
         [todayKey]: level
       }
     }));
+  };
+  
+  // Handle selecting a habit for the activity view
+  const handleSelectHabit = (habitId: string) => {
+    setSelectedHabitId(selectedHabitId === habitId ? undefined : habitId);
+  };
+  
+  // Handle clearing the selected habit
+  const handleClearSelectedHabit = () => {
+    setSelectedHabitId(undefined);
   };
   
   // Handle adding a new habit
@@ -127,12 +138,17 @@ const HabitDashboard: React.FC = () => {
                 <TrendingUp className="h-5 w-5 text-purple-500" />
                 Today's Habits
               </CardTitle>
+              <CardDescription>
+                Click on a habit to see its detailed activity
+              </CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
               <HabitList 
                 habits={habits} 
                 habitData={habitData} 
-                onToggleHabit={handleToggleHabit} 
+                onToggleHabit={handleToggleHabit}
+                onSelectHabit={handleSelectHabit}
+                selectedHabitId={selectedHabitId}
               />
             </CardContent>
           </Card>
@@ -152,12 +168,18 @@ const HabitDashboard: React.FC = () => {
               </div>
             </div>
             <CardDescription className="text-gray-500">
-              {totalContributions} contributions • {currentStreak} day{currentStreak !== 1 ? 's' : ''} streak
+              {selectedHabitId ? 
+                `Showing activity for ${habits.find(h => h.id === selectedHabitId)?.name}` : 
+                `${totalContributions} contributions • ${currentStreak} day${currentStreak !== 1 ? 's' : ''} streak`
+              }
             </CardDescription>
           </CardHeader>
           <CardContent>
             <ContributionGraph 
               habitData={habitData}
+              selectedHabitId={selectedHabitId}
+              habits={habits}
+              onClearSelectedHabit={handleClearSelectedHabit}
             />
           </CardContent>
         </Card>

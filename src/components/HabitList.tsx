@@ -11,12 +11,16 @@ interface HabitListProps {
   habits: Habit[];
   habitData: HabitData;
   onToggleHabit: (habitId: string, level: number) => void;
+  onSelectHabit?: (habitId: string) => void;
+  selectedHabitId?: string;
 }
 
 const HabitList: React.FC<HabitListProps> = ({ 
   habits, 
   habitData, 
-  onToggleHabit 
+  onToggleHabit,
+  onSelectHabit,
+  selectedHabitId
 }) => {
   const todayKey = getTodayKey();
   
@@ -54,20 +58,26 @@ const HabitList: React.FC<HabitListProps> = ({
           {habits.map((habit) => {
             const isCompleted = getHabitStatus(habit.id) > 0;
             const streak = getHabitStreak(habit.id);
+            const isSelected = habit.id === selectedHabitId;
             
             return (
               <div 
                 key={habit.id}
                 className={cn(
-                  "p-4 rounded-xl border transition-all duration-300 flex items-center justify-between group habit-item shadow-sm",
+                  "p-4 rounded-xl border transition-all duration-300 flex items-center justify-between group habit-item shadow-sm cursor-pointer",
                   isCompleted 
                     ? "bg-green-50/70 border-green-100/80 backdrop-blur-sm" 
-                    : "bg-white/80 border-white/40 backdrop-blur-sm hover:bg-white/90"
+                    : "bg-white/80 border-white/40 backdrop-blur-sm hover:bg-white/90",
+                  isSelected && "ring-2 ring-purple-400 ring-offset-2"
                 )}
+                onClick={() => onSelectHabit && onSelectHabit(habit.id)}
               >
                 <div className="flex items-center gap-3">
                   <Button 
-                    onClick={() => handleToggleHabit(habit.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleToggleHabit(habit.id);
+                    }}
                     variant={isCompleted ? "default" : "outline"}
                     size="icon"
                     className={cn(
@@ -98,12 +108,23 @@ const HabitList: React.FC<HabitListProps> = ({
                   </div>
                 </div>
                 
-                {streak > 0 && (
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50/80 backdrop-blur-sm border border-amber-100/60 rounded-full text-amber-700 text-xs font-medium shadow-sm">
-                    <Flame className="h-3.5 w-3.5 text-amber-500" />
-                    <span>{streak} day{streak !== 1 ? 's' : ''}</span>
-                  </div>
-                )}
+                <div className="flex items-center gap-2">
+                  {streak > 0 && (
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50/80 backdrop-blur-sm border border-amber-100/60 rounded-full text-amber-700 text-xs font-medium shadow-sm">
+                      <Flame className="h-3.5 w-3.5 text-amber-500" />
+                      <span>{streak} day{streak !== 1 ? 's' : ''}</span>
+                    </div>
+                  )}
+                  
+                  {/* Custom color indicator */}
+                  {habit.color && (
+                    <div 
+                      className="w-3 h-3 rounded-full shadow-sm" 
+                      style={{ backgroundColor: habit.color }}
+                      title={`${habit.name} color`}
+                    ></div>
+                  )}
+                </div>
               </div>
             );
           })}
