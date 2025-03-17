@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { defaultHabits, Habit, HabitData, generateSampleData } from '@/utils/habitUtils';
 import { formatDateKey, getTodayKey, getDateRangeString, getContributionDays } from '@/utils/dateUtils';
@@ -8,16 +9,28 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useIsMobile } from '@/hooks/use-mobile';
 import { BarChart2, TrendingUp, Smile, Coffee, Heart, Star, Flame } from 'lucide-react';
 
-const HabitDashboard: React.FC = () => {
+interface HabitDashboardProps {
+  userId?: string;
+}
+
+const HabitDashboard: React.FC<HabitDashboardProps> = ({ userId = '1' }) => {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [habitData, setHabitData] = useState<HabitData>({});
   const [selectedHabitId, setSelectedHabitId] = useState<string | undefined>();
   const isMobile = useIsMobile();
   
   useEffect(() => {
-    setHabits(defaultHabits);
-    setHabitData(generateSampleData());
-  }, []);
+    // Generate different sample data for each user
+    const seed = parseInt(userId);
+    setHabits(defaultHabits.map(habit => ({ 
+      ...habit, 
+      id: `${habit.id}-${userId}` // Make habit IDs unique per user
+    })));
+    setHabitData(generateSampleData(seed));
+    
+    // Reset selected habit when switching users
+    setSelectedHabitId(undefined);
+  }, [userId]);
   
   const handleToggleHabit = (habitId: string, level: number) => {
     const todayKey = getTodayKey();

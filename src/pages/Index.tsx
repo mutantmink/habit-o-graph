@@ -1,9 +1,18 @@
 
 import HabitDashboard from '@/components/HabitDashboard';
+import SwipePanel from '@/components/SwipePanel';
 import { Calendar, Sparkles } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
+
+const userGreetings = {
+  '1': 'friend', // You
+  '2': 'Sarah',  // Sarah
+  '3': 'Alex'    // Alex
+};
 
 const Index = () => {
+  const [activeUserId, setActiveUserId] = useState('1'); // Default to 'You'
+  
   // Get current time of day for personalized greeting
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -29,12 +38,23 @@ const Index = () => {
       {/* Personal greeting header */}
       <div className="w-full max-w-5xl mx-auto px-4 pt-10 pb-4 text-left">
         <h2 className="text-2xl md:text-3xl font-medium text-gray-700">
-          {getGreeting()}, <span className="text-blue-600 font-semibold">friend</span> ✨
+          {getGreeting()}, <span className="text-blue-600 font-semibold">{userGreetings[activeUserId as keyof typeof userGreetings]}</span> ✨
         </h2>
         <p className="text-gray-500 mt-1">Let's track your progress and build great habits today!</p>
       </div>
       
-      <HabitDashboard />
+      {/* Dashboard with smooth transition effect */}
+      <div className="relative flex-grow">
+        <div className="transition-all duration-500 ease-in-out">
+          <HabitDashboard key={activeUserId} userId={activeUserId} />
+        </div>
+      </div>
+
+      {/* Swipe panel for dashboard switching */}
+      <SwipePanel 
+        activeUserId={activeUserId}
+        onUserChange={setActiveUserId}
+      />
     </div>
   );
 };
