@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { defaultHabits, Habit, HabitData, generateSampleData } from '@/utils/habitUtils';
 import { formatDateKey, getTodayKey, getDateRangeString, getContributionDays } from '@/utils/dateUtils';
@@ -7,7 +6,7 @@ import HabitList from './HabitList';
 import HabitForm from './HabitForm';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { BarChart2, TrendingUp } from 'lucide-react';
+import { BarChart2, TrendingUp, Smile, Coffee, Heart, Star, Flame } from 'lucide-react';
 
 const HabitDashboard: React.FC = () => {
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -15,13 +14,11 @@ const HabitDashboard: React.FC = () => {
   const [selectedHabitId, setSelectedHabitId] = useState<string | undefined>();
   const isMobile = useIsMobile();
   
-  // Initialize with sample data
   useEffect(() => {
     setHabits(defaultHabits);
     setHabitData(generateSampleData());
   }, []);
   
-  // Handle toggling a habit for today
   const handleToggleHabit = (habitId: string, level: number) => {
     const todayKey = getTodayKey();
     
@@ -34,17 +31,14 @@ const HabitDashboard: React.FC = () => {
     }));
   };
   
-  // Handle selecting a habit for the activity view
   const handleSelectHabit = (habitId: string) => {
     setSelectedHabitId(selectedHabitId === habitId ? undefined : habitId);
   };
   
-  // Handle clearing the selected habit
   const handleClearSelectedHabit = () => {
     setSelectedHabitId(undefined);
   };
   
-  // Handle adding a new habit
   const handleAddHabit = (habit: Habit) => {
     setHabits(prevHabits => [...prevHabits, habit]);
     setHabitData(prevData => ({
@@ -53,16 +47,13 @@ const HabitDashboard: React.FC = () => {
     }));
   };
   
-  // Get date range string for the contribution graph
   const contributionDays = getContributionDays();
   const dateRangeString = getDateRangeString(contributionDays);
   
-  // Calculate total contributions
   const totalContributions = Object.values(habitData).reduce((total, habitEntries) => {
     return total + Object.values(habitEntries).filter(level => level > 0).length;
   }, 0);
 
-  // Calculate streak days (consecutive days with at least one habit)
   const calculateCurrentStreak = () => {
     const today = new Date();
     let currentDate = new Date(today);
@@ -83,63 +74,73 @@ const HabitDashboard: React.FC = () => {
 
   const currentStreak = calculateCurrentStreak();
   
+  const getMotivationalQuote = () => {
+    const quotes = [
+      "Every day is a new beginning!",
+      "Small steps, big changes ✨",
+      "You're doing great - keep it up!",
+      "Consistency is your superpower",
+      "Progress over perfection 💪"
+    ];
+    return quotes[Math.floor(Math.random() * quotes.length)];
+  };
+  
   return (
-    <div className="max-w-5xl mx-auto px-4 md:px-8 py-8 fade-in">
-      <div className="text-center mb-10">
-        <h1 className="text-4xl font-bold text-gray-900 mb-3 tracking-tight">Habit Dashboard</h1>
-        <p className="text-gray-500 max-w-2xl mx-auto">
-          Track your daily habits with a simple, visual interface. Build consistency and see your progress over time.
+    <div className="max-w-5xl mx-auto px-4 md:px-8 py-4 fade-in">      
+      <div className="mb-6 text-center">
+        <p className="text-sm font-medium text-blue-600 bg-blue-50 inline-block py-2 px-4 rounded-full shadow-sm border border-blue-100">
+          {getMotivationalQuote()}
         </p>
       </div>
       
-      {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 slide-up" style={{ animationDelay: '0.1s' }}>
-        <Card className="bg-white/90 backdrop-blur-sm border-purple-100 shadow-md">
+        <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-indigo-100 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1">
           <CardContent className="p-6 flex flex-col items-center justify-center">
-            <p className="text-sm font-medium text-gray-500 mb-1">Total Habits</p>
-            <p className="text-3xl font-bold text-purple-600">{habits.length}</p>
+            <Smile className="h-8 w-8 text-blue-400 mb-2" />
+            <p className="text-sm font-medium text-blue-900 mb-1">My Habits</p>
+            <p className="text-3xl font-bold text-blue-600">{habits.length}</p>
           </CardContent>
         </Card>
         
-        <Card className="bg-white/90 backdrop-blur-sm border-purple-100 shadow-md">
+        <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-emerald-100 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1">
           <CardContent className="p-6 flex flex-col items-center justify-center">
-            <p className="text-sm font-medium text-gray-500 mb-1">Contributions</p>
-            <p className="text-3xl font-bold text-purple-600">{totalContributions}</p>
+            <Star className="h-8 w-8 text-emerald-400 mb-2" />
+            <p className="text-sm font-medium text-emerald-900 mb-1">Completed</p>
+            <p className="text-3xl font-bold text-emerald-600">{totalContributions}</p>
           </CardContent>
         </Card>
         
-        <Card className="bg-white/90 backdrop-blur-sm border-purple-100 shadow-md">
+        <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-orange-100 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1">
           <CardContent className="p-6 flex flex-col items-center justify-center">
-            <p className="text-sm font-medium text-gray-500 mb-1">Current Streak</p>
-            <p className="text-3xl font-bold text-purple-600">{currentStreak} days</p>
+            <Flame className="h-8 w-8 text-amber-400 mb-2" />
+            <p className="text-sm font-medium text-amber-900 mb-1">Current Streak</p>
+            <p className="text-3xl font-bold text-amber-600">{currentStreak} days</p>
           </CardContent>
         </Card>
         
-        <Card className="bg-white/90 backdrop-blur-sm border-purple-100 shadow-md">
+        <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-pink-100 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1">
           <CardContent className="p-6 flex flex-col items-center justify-center">
-            <p className="text-sm font-medium text-gray-500 mb-1">Year View</p>
-            <p className="text-3xl font-bold text-purple-600">{new Date().getFullYear()}</p>
+            <Heart className="h-8 w-8 text-pink-400 mb-2" />
+            <p className="text-sm font-medium text-pink-900 mb-1">This Year</p>
+            <p className="text-3xl font-bold text-pink-600">{new Date().getFullYear()}</p>
           </CardContent>
         </Card>
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Habit tracking section */}
         <div className="lg:col-span-1 order-2 lg:order-1 grid gap-6">
-          {/* Add habit form */}
           <div className="slide-up" style={{ animationDelay: '0.2s' }}>
             <HabitForm onAddHabit={handleAddHabit} />
           </div>
           
-          {/* Today's habits */}
-          <Card className="overflow-hidden slide-up bg-white/90 backdrop-blur-sm border-purple-100 shadow-md" style={{ animationDelay: '0.3s' }}>
+          <Card className="overflow-hidden slide-up bg-gradient-to-br from-white to-blue-50 backdrop-blur-sm border-blue-100 shadow-md rounded-2xl" style={{ animationDelay: '0.3s' }}>
             <CardHeader className="pb-0 space-y-0">
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-purple-500" />
+              <CardTitle className="flex items-center gap-2 text-blue-800">
+                <Coffee className="h-5 w-5 text-blue-500" />
                 Today's Habits
               </CardTitle>
-              <CardDescription>
-                Click on a habit to see its detailed activity
+              <CardDescription className="text-blue-600/70">
+                Click on a habit to see its activity
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
@@ -154,20 +155,19 @@ const HabitDashboard: React.FC = () => {
           </Card>
         </div>
         
-        {/* Contribution graph section */}
-        <Card className="lg:col-span-2 order-1 lg:order-2 slide-up bg-white/90 backdrop-blur-sm border-purple-100 shadow-md" style={{ animationDelay: '0.15s' }}>
+        <Card className="lg:col-span-2 order-1 lg:order-2 slide-up bg-gradient-to-br from-white to-indigo-50 backdrop-blur-sm border-indigo-100 shadow-md rounded-2xl" style={{ animationDelay: '0.15s' }}>
           <CardHeader className="pb-2">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
-                <BarChart2 className="h-5 w-5 text-purple-500" />
-                <CardTitle>Activity Overview</CardTitle>
+                <BarChart2 className="h-5 w-5 text-indigo-500" />
+                <CardTitle className="text-indigo-800">My Progress</CardTitle>
               </div>
-              <div className="flex items-center gap-2 rounded-full bg-purple-50 px-3 py-1">
-                <span className="h-2 w-2 rounded-full bg-purple-500"></span>
-                <span className="text-xs text-purple-700 font-medium">{dateRangeString}</span>
+              <div className="flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 border border-indigo-100">
+                <span className="h-2 w-2 rounded-full bg-indigo-500"></span>
+                <span className="text-xs text-indigo-700 font-medium">{dateRangeString}</span>
               </div>
             </div>
-            <CardDescription className="text-gray-500">
+            <CardDescription className="text-indigo-600/70">
               {selectedHabitId ? 
                 `Showing activity for ${habits.find(h => h.id === selectedHabitId)?.name}` : 
                 `${totalContributions} contributions • ${currentStreak} day${currentStreak !== 1 ? 's' : ''} streak`

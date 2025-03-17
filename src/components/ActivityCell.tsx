@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/dateUtils';
 import { 
@@ -29,9 +29,9 @@ const ActivityCell: React.FC<ActivityCellProps> = ({
   color
 }) => {
   const cellSizeClasses = {
-    sm: 'w-2.5 h-2.5',
-    md: 'w-3.5 h-3.5',
-    lg: 'w-4 h-4',
+    sm: 'w-3 h-3',
+    md: 'w-4 h-4',
+    lg: 'w-5 h-5',
   };
   
   // Default color palette for a more vibrant, punchy look
@@ -78,7 +78,7 @@ const ActivityCell: React.FC<ActivityCellProps> = ({
       <HoverCardTrigger asChild>
         <div
           className={cn(
-            'rounded-md shadow-sm transition-all duration-300 ease-in-out',
+            'rounded-lg shadow-sm transition-all duration-300 ease-in-out',
             cellSizeClasses[size],
             !color && defaultLevelClasses[level as keyof typeof defaultLevelClasses],
             'hover:scale-150 hover:z-10',
@@ -89,7 +89,7 @@ const ActivityCell: React.FC<ActivityCellProps> = ({
       </HoverCardTrigger>
       <HoverCardContent 
         side="top" 
-        className="p-0 w-56 bg-white/95 backdrop-blur-md rounded-lg shadow-lg border border-purple-100"
+        className="p-0 w-56 bg-white/95 backdrop-blur-md rounded-xl shadow-lg border border-indigo-100"
       >
         <div className="p-3">
           <div className="mb-2">
@@ -104,7 +104,7 @@ const ActivityCell: React.FC<ActivityCellProps> = ({
                 {habitDetails.map((habit, idx) => (
                   <li key={idx} className="flex items-center gap-1.5 text-xs">
                     <span className={cn(
-                      'w-1.5 h-1.5 rounded-full',
+                      'w-1.5 h-1.5 rounded-lg',
                       habit.level === 1 ? 'bg-purple-300' :
                       habit.level === 2 ? 'bg-purple-400' :
                       habit.level === 3 ? 'bg-purple-500' : 'bg-purple-700'
